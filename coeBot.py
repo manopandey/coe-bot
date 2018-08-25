@@ -3,7 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import time
-from datetime import datetime
 import pytz
 
 updater = Updater(token='551736443:AAFrYyt2GRNov7n1A6RPojE-9jk-NQSEaIg')
