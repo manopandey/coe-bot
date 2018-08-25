@@ -1,45 +1,66 @@
-from telegram.ext import Updater, CommandHandler
-import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
-import time
-import pytz
+from time import sleep
+from os import environ
+from bs4 import BeautifulSoup
+import requests, pytz
+import telegram
 
-updater = Updater(token='551736443:AAFrYyt2GRNov7n1A6RPojE-9jk-NQSEaIg')
-
-def coe():
-  
-    data = requests.get("https://www.mytransport.sg/oneMotoring/coeDetails.html")
-    content = data.content
-  
-    soup = BeautifulSoup(content,"html.parser")
-  
-    bidDate = soup.find("div",{"id":"subpage_content"}).find("h3").text
-   
+def isBidding(soup):
+    #String returns last bid datetime, if bidding is on-going it will return bid end datetime 
     bidEnd = soup.find("div",{"id":"subpage_content"}).find("p").text
-    bidEnd_DateTime = int(bidEnd.find("/"))-2
- 
-    coe_new = soup.find("table",{"class":"table_standard_type2"}).find("tbody").find_all("tr")
- 
-    catA = coe_new[0].find_all("td")
-    catB = coe_new[1].find_all("td")
-    catC = coe_new[2].find_all("td")
-    catD = coe_new[3].find_all("td")
-    catE = coe_new[4].find_all("td")
-   
-    if catA[2].text == "1":
-        return ("Bidding is currently in progress, Please check back after "+bidEnd[bidEnd_DateTime:])
+
+    #Position where date and time starts in "bidEnd" string
+    bidEnd_date_startpos = int(bidEnd.find("/"))-2
+    bidEnd_time_startpos = int(bidEnd.find(":"))-2
+
+    #Using start positions, extract bid end date and time and store in variables
+    bidEnd_date = bidEnd[bidEnd_date_startpos:bidEnd_time_startpos]
+    bidEnd_time = bidEnd[bidEnd_time_startpos:bidEnd_time_startpos + 5]
+
+    #Set timezone incase server is not in singapore
+    timezone = pytz.timezone('Asia/Singapore')
+    #Create datetime object using bid end date and time
+    bidEnd_datetime = datetime.strptime(bidEnd_date+" "+bidEnd_time, "%d/%m/%Y %H:%M")
+    #Convert to aware datetime object
+    bidEnd_datetime = timezone.localize(bidEnd_datetime)
+
+    #Compare to see if bid has ended
+    if(bidEnd_datetime > datetime.now(timezone)):
+        return True
     else:
-        return (str(datetime.now(pytz.timezone('Asia/Singapore')))+"\n"+bidDate+"\nCAT "+catA[0].text+" - "+catA[1].text+" - $"+catA[3].text+"\nCAT "+catB[0].text+" - "+catB[1].text+" - $"+catB[3].text+"\nCAT "+catC[0].text+" - "+catC[1].text+" - $"+catC[3].text+"\nCAT "+catD[0].text+" - "+catD[1].text+" - $"+catD[3].text+"\nCAT "+catE[0].text+" - "+catE[1].text+" - $"+catE[3].text+"\n")
+        return False
+    
 
-dispatcher = updater.dispatcher
+def main():
+    #Request site, and extract content and save to variable
+    site_content = requests.get("https://www.mytransport.sg/oneMotoring/coeDetails.html").content
 
-def start(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text=coe())
+    #Parse content using BeautifulSoup
+    soup = BeautifulSoup(site_content,"html.parser")
+
+    #Check if bidding is going on
+    if(isBidding(soup)):
+        raise Exception('Bidding in progress !')
+    else:
+        #Latest bid period 
+        bid_period = soup.find("div",{"id":"subpage_content"}).find("h3").text 
+        #Latest Coe Results
+        coe_new = soup.find("table",{"class":"table_standard_type2"}).find("tbody").find_all("tr")
+        #Assign values to variables
+        catA = coe_new[0].find_all("td")
+        catB = coe_new[1].find_all("td")
+        catC = coe_new[2].find_all("td")
+        catD = coe_new[3].find_all("td")
+        catE = coe_new[4].find_all("td")
+        #Format and return response
+        return(bid_period+"\nCAT "+catA[0].text+" - "+catA[1].text+" - $"+catA[3].text+"\nCAT "+catB[0].text+" - "+catB[1].text+" - $"+catB[3].text+"\nCAT "+catC[0].text+" - "+catC[1].text+" - $"+catC[3].text+"\nCAT "+catD[0].text+" - "+catD[1].text+" - $"+catD[3].text+"\nCAT "+catE[0].text+" - "+catE[1].text+" - $"+catE[3].text+"\n")
 
 
-start_handler = CommandHandler('coe', start)
-dispatcher.add_handler(start_handler)
-
-updater.start_polling()
-
+if __name__ == '__main__':
+    bot = telegram.Bot(token=environ['TELEGRAM_TOKEN'])
+    while True:
+        try:
+            bot.send_message('@getCoe', text=main())
+        except Exception as err:
+            print(str(err))
+        sleep(10)
