@@ -63,4 +63,4 @@ if __name__ == '__main__':
             bot.send_message('@getCoe', text=main())
         except Exception as err:
             print(str(err))
-        sleep(10)
+        sleep(900)
