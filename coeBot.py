@@ -1,6 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 import time
 
 updater = Updater(token='551736443:AAFrYyt2GRNov7n1A6RPojE-9jk-NQSEaIg')
@@ -28,7 +29,7 @@ def coe():
     if catA[2].text == "1":
         return ("Bidding is currently in progress, Please check back after "+bidEnd[bidEnd_DateTime:])
     else:
-        return (bidDate+"\nCAT "+catA[0].text+" - "+catA[1].text+" - $"+catA[3].text+"\nCAT "+catB[0].text+" - "+catB[1].text+" - $"+catB[3].text+"\nCAT "+catC[0].text+" - "+catC[1].text+" - $"+catC[3].text+"\nCAT "+catD[0].text+" - "+catD[1].text+" - $"+catD[3].text+"\nCAT "+catE[0].text+" - "+catE[1].text+" - $"+catE[3].text+"\n")
+        return (datetime.now()+"\n"+bidDate+"\nCAT "+catA[0].text+" - "+catA[1].text+" - $"+catA[3].text+"\nCAT "+catB[0].text+" - "+catB[1].text+" - $"+catB[3].text+"\nCAT "+catC[0].text+" - "+catC[1].text+" - $"+catC[3].text+"\nCAT "+catD[0].text+" - "+catD[1].text+" - $"+catD[3].text+"\nCAT "+catE[0].text+" - "+catE[1].text+" - $"+catE[3].text+"\n")
 
 dispatcher = updater.dispatcher
 
