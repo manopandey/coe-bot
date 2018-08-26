@@ -5,7 +5,12 @@ from bs4 import BeautifulSoup
 import requests, pytz
 import telegram
 
-def isBidding(soup):
+last_broadcast = None
+#Set timezone incase server is not in singapore
+timezone = pytz.timezone('Asia/Singapore')
+global last_broadcast , timezone
+
+def isBidding_broadcasted(soup):
     #String returns last bid datetime, if bidding is on-going it will return bid end datetime 
     bidEnd = soup.find("div",{"id":"subpage_content"}).find("p").text
 
@@ -16,16 +21,14 @@ def isBidding(soup):
     #Using start positions, extract bid end date and time and store in variables
     bidEnd_date = bidEnd[bidEnd_date_startpos:bidEnd_time_startpos]
     bidEnd_time = bidEnd[bidEnd_time_startpos:bidEnd_time_startpos + 5]
-
-    #Set timezone incase server is not in singapore
-    timezone = pytz.timezone('Asia/Singapore')
+    
     #Create datetime object using bid end date and time
     bidEnd_datetime = datetime.strptime(bidEnd_date+" "+bidEnd_time, "%d/%m/%Y %H:%M")
     #Convert to aware datetime object
     bidEnd_datetime = timezone.localize(bidEnd_datetime)
 
-    #Compare to see if bid has ended
-    if(bidEnd_datetime > datetime.now(timezone)):
+    #Check if bid has been broadcasted or bidding is in progress
+    if(last_broadcast > bidEnd_datetime or bidEnd_datetime > datetime.now(timezone)):
         return True
     else:
         return False
@@ -38,9 +41,9 @@ def main():
     #Parse content using BeautifulSoup
     soup = BeautifulSoup(site_content,"html.parser")
 
-    #Check if bidding is going on
-    if(isBidding(soup)):
-        raise Exception('Bidding in progress !')
+    #Check if bidding is going on or data has been broadcasted
+    if(isBidding_broadcasted(soup)):
+        raise Exception('Bidding or Broadcasted !')
     else:
         #Latest bid period 
         bid_period = soup.find("div",{"id":"subpage_content"}).find("h3").text 
@@ -61,6 +64,7 @@ if __name__ == '__main__':
     while True:
         try:
             bot.send_message('@getCoe', text=main())
+            last_broadcast = datetime.now(timezone)
         except Exception as err:
             print(str(err))
-        sleep(900)
+        sleep(10)
