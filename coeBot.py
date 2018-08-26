@@ -8,8 +8,8 @@ import telegram
 global last_broadcast , timezone
 #Set timezone incase server is not in singapore
 timezone = pytz.timezone('Asia/Singapore')
-
-last_broadcast = None
+#Preset a last broadcast 
+last_broadcast = timezone.localize(datetime.strptime("23/08/2018 15:00", "%d/%m/%Y %H:%M"))
 
 def isBidding_broadcasted(soup):
     #String returns last bid datetime, if bidding is on-going it will return bid end datetime 
