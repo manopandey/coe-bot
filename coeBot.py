@@ -5,10 +5,11 @@ from bs4 import BeautifulSoup
 import requests, pytz
 import telegram
 
-last_broadcast = None
+global last_broadcast , timezone
 #Set timezone incase server is not in singapore
 timezone = pytz.timezone('Asia/Singapore')
-global last_broadcast , timezone
+
+last_broadcast = None
 
 def isBidding_broadcasted(soup):
     #String returns last bid datetime, if bidding is on-going it will return bid end datetime 
