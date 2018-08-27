@@ -35,6 +35,7 @@ def coe():
 dispatcher = updater.dispatcher
 
 def start(bot, update):
+    print(update.message.chat_id)
     bot.send_message(chat_id=update.message.chat_id, text=coe())
 
 
