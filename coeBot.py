@@ -3,7 +3,6 @@ from time import sleep
 from os import environ
 from bs4 import BeautifulSoup
 import requests, pytz
-import telegram
 
 global last_broadcast , timezone
 #Set timezone incase server is not in singapore
@@ -28,7 +27,6 @@ def isBidding_broadcasted(soup):
     #Convert to aware datetime object
     bidEnd_datetime = timezone.localize(bidEnd_datetime)
 
-    
     print("Last Broadcast: "+str(last_broadcast))
     print("Bid End: "+str(bidEnd_datetime))
 
@@ -65,10 +63,10 @@ def main():
 
 
 if __name__ == '__main__':
-    bot = telegram.Bot(token=environ['TELEGRAM_TOKEN'])
+    url="https://api.telegram.org/bot"+environ['TELEGRAM_TOKEN']+"/sendMessage?chat_id=@getCoe&text="
     while True:
         try:
-            bot.send_message('@getCoe', text=main())
+            requests.get(url+main())
             last_broadcast = datetime.now(timezone)
         except Exception as err:
             print(str(err))
