@@ -8,7 +8,6 @@ import pytz
 updater = Updater(token='551736443:AAFrYyt2GRNov7n1A6RPojE-9jk-NQSEaIg')
 
 def coe():
-    print("Working")
     data = requests.get("https://www.mytransport.sg/oneMotoring/coeDetails.html")
     content = data.content
   
@@ -35,7 +34,6 @@ def coe():
 dispatcher = updater.dispatcher
 
 def start(bot, update):
-    print(update.message.chat_id)
     bot.send_message(chat_id=update.message.chat_id, text=coe())
 
 
