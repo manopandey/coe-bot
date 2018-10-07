@@ -2,7 +2,8 @@ from datetime import datetime
 from time import sleep
 from os import environ
 from bs4 import BeautifulSoup
-import requests, pytz, telegram
+import requests, pytz
+import telegram
 
 timezone = pytz.timezone('Asia/Singapore')
 
