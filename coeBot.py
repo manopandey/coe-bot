@@ -35,8 +35,8 @@ def result(rows, column, bidInfoBig):
 
 
 if __name__ == '__main__':
-    bot = telegram.Bot(token=environ['TELEGRAM_TOKEN'])
-    lastBroadcast = None
+    bot = telegram.Bot(token='557146256:AAHJ1xORliQhQmJHRFtPSLNjTwWQlhwjOZo')
+    lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
     while True:
         try:
             data = requests.get("https://www.mytransport.sg/oneMotoring/coeDetails.html").content
@@ -53,14 +53,12 @@ if __name__ == '__main__':
                 bidEnd = datetime.strptime(bidInfo_array[-3]+" "+bidInfo_array[-2], "%d/%m/%Y %H:%M").strftime('%d%m%y%H%M')
 
             if 'has' and 'ended' in bidInfo_array:
-                if lastBroadcast == None or lastBroadcast < currentTime:
+                if lastBroadcast < currentTime:
                     if(currentTime == bidEnd):
                         bot.send_message('@getUpdateAndInfo', text=result(rows, column, bidInfoBig))
                         lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
                 else:
                     print("Bidding has ended")
-
-                
             elif 'will' and 'end' in bidInfo_array:
                 print("Bidding is currently in progress and will end on " + bidInfo_array[-3]+" "+bidInfo_array[-2])
             
