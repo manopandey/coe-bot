@@ -52,15 +52,13 @@ if __name__ == '__main__':
             else:
                 bidEnd = datetime.strptime(bidInfo_array[-3]+" "+bidInfo_array[-2], "%d/%m/%Y %H:%M").strftime('%d%m%y%H%M')
 
-            print(lastBroadcast)
-
             if 'has' and 'ended' in bidInfo_array:
                 if lastBroadcast == None or lastBroadcast < currentTime:
                     if(currentTime == bidEnd):
                         bot.send_message('@getUpdateAndInfo', text=result(rows, column, bidInfoBig))
                         lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
                 else:
-                    print("Bidding has ended and broadcasted")
+                    print("Bidding has ended")
 
                 
             elif 'will' and 'end' in bidInfo_array:
