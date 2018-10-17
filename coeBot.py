@@ -47,7 +47,10 @@ if __name__ == '__main__':
             bidInfoBig = soup.find("div",{"id":"subpage_content"}).find("h3").text
             bidInfo_array = bidInfo.split()
             currentTime = datetime.now(timezone).strftime('%d%m%y%H%M')
-            bidEnd = datetime.strptime(bidInfo_array[-3]+" "+bidInfo_array[-2], "%d/%m/%Y %H:%M").strftime('%d%m%y%H%M')
+            if 'finalised' in bidInfo_array:
+                bidEnd = datetime.strptime(bidInfo_array[-7]+" "+bidInfo_array[-6], "%d/%m/%Y %H:%M").strftime('%d%m%y%H%M')
+            else:
+                bidEnd = datetime.strptime(bidInfo_array[-3]+" "+bidInfo_array[-2], "%d/%m/%Y %H:%M").strftime('%d%m%y%H%M')
 
             print(lastBroadcast)
 
