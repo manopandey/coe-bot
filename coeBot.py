@@ -35,7 +35,7 @@ def result(rows, column, bidInfoBig):
 
 
 if __name__ == '__main__':
-    bot = telegram.Bot(token='557146256:AAHJ1xORliQhQmJHRFtPSLNjTwWQlhwjOZo')
+    bot = telegram.Bot(token='1860852795:AAHH4eIYOkrPBv-j8M5n9E2d8jJT9WVxI_Q')
     lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
     while True:
         try:
@@ -55,15 +55,14 @@ if __name__ == '__main__':
             if 'has' and 'ended' in bidInfo_array:
                 if lastBroadcast < currentTime:
                     if(currentTime == bidEnd):
-                        bot.send_message('@getUpdateAndInfo', text=result(rows, column, bidInfoBig))
+                        bot.send_message('@Manotifications', text=result(rows, column, bidInfoBig))
                         lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
                 else:
                     print("Bidding has ended")
             elif 'will' and 'end' in bidInfo_array:
                 print("Bidding is currently in progress and will end on " + bidInfo_array[-3]+" "+bidInfo_array[-2])
-            
-            sleep(10)
-        except:
-            print("Error on COE page")
-            sleep(10)
 
+            sleep(10)
+        except Exception as err:
+            print("Error : "+str(err))
+            sleep(10)
