@@ -58,7 +58,7 @@ if __name__ == '__main__':
                         bot.send_message('@Manotifications', text=result(rows, column, bidInfoBig))
                         lastBroadcast = datetime.now(timezone).strftime('%d%m%y%H%M')
                 else:
-                    print("Bidding has ended")
+                    print("Bidding has ended, Current Time:"+currentTime)
             elif 'will' and 'end' in bidInfo_array:
                 print("Bidding is currently in progress and will end on " + bidInfo_array[-3]+" "+bidInfo_array[-2])
 
